@@ -1,29 +1,14 @@
 import { APIGatewayProxyHandlerV2 } from "aws-lambda";
-import { Movie, MovieCast } from "../shared/types";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   QueryCommand,
   QueryCommandInput,
-  GetCommand,
 } from "@aws-sdk/lib-dynamodb";
-import Ajv from "ajv";
-import schema from "../shared/types.schema.json";
 
-type ResponseBody = {
-  data: {
-    movie: Movie;
-    cast?: MovieCast[];
-  };
-};
-
-const ajv = new Ajv({ coerceTypes: true });
-const isValidQueryParams = ajv.compile(
-  schema.definitions["MovieQueryParams"] || {}
-);
 const ddbDocClient = createDDbDocClient();
 
-export const handler: APIGatewayProxyHandlerV2 = async (event, context) => {
+export const handler: APIGatewayProxyHandlerV2 = async (event) => {
   try {
     console.log("Event: ", JSON.stringify(event));
     const parameters = event?.pathParameters;
