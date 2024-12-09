@@ -14,6 +14,8 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     const parameters = event?.pathParameters;
     const crewRole = parameters?.role || undefined;
     const movieId = parameters?.movieId ? parseInt(parameters.movieId) : undefined;
+    const queryParams = event?.queryStringParameters;
+    const nameSubstring = queryParams?.name;
 
     if (!crewRole || !movieId) {
       return {
@@ -51,7 +53,11 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     let names = undefined
     for (let item of commandOutput.Items) {
         if(item.crewRole === crewRole) {
-            names = item.names
+            if(!nameSubstring) {
+                names = item.names.split(",");
+            } else {
+                names = item.names.split(",").filter(function (str) { return str.includes(nameSubstring); })
+            }
         }
     }
 
